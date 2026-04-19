@@ -1,58 +1,41 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
 import './App.css'
 import { useGetWeatherForecast } from './api/weather-forecast/weather-forecast'
 
 
 function App() {
-  const [count, setCount] = useState(0);
-
   const { data: weatherForecast, isLoading, isError, refetch } = useGetWeatherForecast();
 
   return (
     <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
+      <section className="weather-card" aria-labelledby="weather-heading">
+        <div className="weather-head">
+          <div>
+            <h2 id="weather-heading">Weather Forecast</h2>
+            <p className="weather-subtitle">Live conditions from your API</p>
+          </div>
+          <button className="weather-refresh" onClick={() => refetch()}>
+            Refresh
+          </button>
         </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
+
+        {isLoading && <p className="weather-status">Loading forecast...</p>}
+        {isError && (
+          <p className="weather-status weather-status-error">
+            Could not load weather forecast.
           </p>
-        </div>
-        <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <div>
-        <h1>Weather Forecast</h1>
-        <button onClick={() => refetch()}>Refresh</button>
-        {isLoading && <p>Loading...</p>}
-        {isError && <p>Error getting weather forecast</p>}
+        )}
         {weatherForecast && (
-          <ul>
+          <ul className="weather-list">
             {weatherForecast.data.map((forecast) => (
-              <li key={forecast.date}>
-                {forecast.date}: {forecast.temperatureC}°C - {forecast.summary}
+              <li className="weather-item" key={forecast.date}>
+                <span className="weather-date">{forecast.date}</span>
+                <span className="weather-temp">{forecast.temperatureC}°C</span>
+                <span className="weather-summary">{forecast.summary}</span>
               </li>
             ))}
           </ul>
         )}
-      </div>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
+      </section>
     </>
   )
 }
